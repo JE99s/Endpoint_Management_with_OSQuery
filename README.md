@@ -33,50 +33,101 @@ that has the <b>.msi</b> extension.
 <br/>
 <img src="https://i.imgur.com/ELif6rd.png" height="70%" width="70%" alt=".msi extension for Docker and node.js"/>
 <br />
-<h4>Windows 10 Enterprise</h4>
-Next, we'll download a <a href="https://www.microsoft.com/en-us/evalcenter/evaluate-windows-10-enterprise" target="_blank">Windows 10 Enterprise</a> ISO file. Next, fill out your information (uncheck the box for additional communications) and select your language. Then, click <b>Download</b>. Now, we'll prepare the VMs.
-<img src="https://i.imgur.com/B1CGAMt.png" height="50%" width="50%" alt="Windows 10 Enterprise ISO Download"/>
+Once I run the installation wizard and finish the GUI installment of Node.js a cmd window pops up and prompts me
+to press any key to continue to upgrade and install additional tools such as <b>chocolately</b>. I do as I am instructed and
+then a Windows PowerShell window pops up and starts installing upgrades and additional data.
+<br />
+<img src="https://i.imgur.com/jcFp6di.jpeg" height="70%" width="70%" alt="Installation shown thru PS"/>
 <br />
 
-<h3>Windows Server 2019</h3>
-Let's first configure our Windows Server 2019 VM as our domain controller. On our VirtualBox VM Manager, create a new VM by clicking the <b>New VM</b> button. Configure the following:
+It took about ten minutes to complete the additional installation(s). Where many extension upgrades and packages were downloaded as shown below. Once the additional tools have been installed, I entered “ENTER” in the command line to exit as instructed in the Windows PowerShell below: 
 <br/>
-<img src="https://i.imgur.com/q62IZCb.png" height="80%" width="80%" alt="VM Name and OS"/>
+<img src="https://i.imgur.com/tZc66ku.png" height="75%" width="75%" alt="ENTER"/>
 <br />
-<img src="https://i.imgur.com/30MXVBB.png" height="80%" width="80%" alt="Hardware"/>
+
+
+To confirm the completed installation, I opened another PowerShell window as an administrator (admin) and
+entered the command <b>“node -v”</b> to check which version of Node.js I had installed. Additionally, I entered <b>“node -
+npm”</b> to view the destination of the installation of NPM.
 <br />
-<img src="https://i.imgur.com/hAIh2aX.png" height="80%" width="80%" alt="Virtual Hard disk"/>
+<img src="https://i.imgur.com/N0YLfFp.png" height="60%" width="60%" alt="Node commands on PowerShell"/>
+<br />
+
+
+Throughout out the myriad of output from the installation in the PowerShell, I notice that it was recommended to
+restart the machine after finishing the installation. Hence, I restart my Windows machine and continue to install
+Docker in a similar process.
+
+
+Now, I proceed to install Docker in a similar fashion through the same website with instructions on installing both
+Node.js and Docker to run Fleet. I click on the link (or button) to install Docker the quickest way.
+
+
+Before pressing the blue URL button (as shown below) to download Docker Desktop for Windows, I read through the
+systems requirements and the rest of the information throughout the webpage. I must be aware that I will probably
+have to update my Windows Subsystem for Linux (WSL) once installed to WSL 2 to effectively run docker and Fleet. I
+go ahead and click the download link and once the installer file has finished downloading, I double click on it through
+the browser and the installation wizard soon pops up.
+
+
+
+<br />
+<img src="https://i.imgur.com/n7CoXDh.png" height="50%" width="50%" alt="Downloading Docker"/>
 <br />
 Click <b>Finish</b>, but don't start the VM yet!
 <br />
-<img src="https://i.imgur.com/3H0FGXs.png" height="50%" width="50%" alt="Network Settings Win Server 2019"/>
-<br />
-<img src="https://i.imgur.com/xhlKpnr.png" height="80%" width="80%" alt="Win Server 2019  Network Adapters"/>
+<img src="https://i.imgur.com/n7CoXDh.png" height="60%" width="60%" alt="System Requirements"/>
 <br />
 
-<h3>Windows 10 Enterprise Template</h3>
-Now, we'll create a new VM and give it a name such as <b><i>Win10EnterpriseTemplate</i></b>.
+It took nearly 2 mins for the unpacking of files and everything to install.
+
+<br />
+<img src="https://i.imgur.com/pnCdkhs.png" height="60%" width="60%" alt="Installing pkgs"/>
+<br />
+
+
+<br />
+<img src="https://i.imgur.com/YRiBhwP.png" height="70%" width="70%" alt="Installing Docker Files"/>
+<br />
+
+
+Once the installation finished, I was prompted the message to accept the Software Service Agreement. Once I
+accepted, the installation wizard for Docker prompted for the close and restart of the Windows machine.
+
+<br />
+<img src="https://i.imgur.com/rOMC99l.png" height="70%" width="70%" alt="Docker Software Service Agreement"/>
+<br />
+
+After restarting the machine, Docker Desktop booted up and I was instructed to install the kernel update for the WSL
+2 Linux kernel because its installation was incomplete, as shown below.
+
+<br />
+<img src="https://i.imgur.com/PvpsfyE.png" height="40%" width="40%" alt="WSL 2 Incomplete"/>
+<br />
+
+Thus, I navigated to the website with the provided instructions and followed through it to enable the Windows
+subsystem for Linux feature, virtual machine feature, download an WSL 2 engine updates package, set WSL 2 as the
+default when installing a new Linux distribution and install a Kali Linux distribution. As shown below in the following
+screenshots.
+
 <br/>
-<img src="https://i.imgur.com/5NUCs6B.png" height="80%" width="80%" alt="Create Win10EnterpriseTemplate"/>
+<img src="https://i.imgur.com/RYCVPct.png" height="70%" width="70%" alt="Enable WSL on PS"/>
 <br />
-<img src="https://i.imgur.com/qcZ29aP.png" height="80%" width="80%" alt="Hardware"/>
+<img src="https://i.imgur.com/HWU2GhX.png" height="70%" width="70%" alt="Operation completed"/>
 <br />
-<img src="https://i.imgur.com/XLLFNp9.png" height="80%" width="80%" alt="Virtual Hard disk"/>
+
+
 <br />
-Again, click <b>Finish</b>, but do not start the VM yet! We'll go to the network settings of the VM.
-<br/>
-<img src="https://i.imgur.com/z236WTf.png" height="60%" width="60%" alt="Win10Enterprise Network Settings"/>
+<img src="https://i.imgur.com/48cSq1L.png" height="75%" width="75%" alt="Install Kali Linux from Microsoft store"/>
 <br />
-<img src="https://i.imgur.com/4EKyJtJ.png" height="80%" width="80%" alt="Win10EnterpriseTemplate Network Adapter"/>
+
+
+
+To ensure that I implemented these instructions correctly, I open a PowerShell window as an admin and enter the
+command <b>“wsl -l -v”</b> to view what version of WSL I have, which showed sufficient results. Still on the PowerShell, I
+enter <b>“npm install -g fleetctl”</b> on the command line to install the Fleet command-line tool.
 <br />
-Make sure to save the settings of the VM and now we'll start the installation of the operating systems.
-<br />
-<h3>Windows Server 2019</h3>
-We'll hover over our newly created Windows Server 2019 VM and double-click to start the VM. Once booting finishes, Choose languge > Click <b>Install Now</b>.
-<img src="https://i.imgur.com/Gnh0EGN.png" height="75%" width="75%" alt="Choose Language"/>
-<br />
-Choose <b>Windows Server 2019 Standard Evaluation (Desktop Experience)</b>
-<img src="https://i.imgur.com/e9H4q1x.png" height="75%" width="75%" alt="Choose Standard Evaluation (desktop experience)"/>
+<img src="https://i.imgur.com/9bgwpRL.png" height="75%" width="75%" alt=""/>
 <br />
 We'll click <b>Next</b> and accept the terms and conditions. Then, we'll choose a <b>Custom</b> installation of Windows.
 <br />
