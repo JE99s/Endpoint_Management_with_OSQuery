@@ -74,7 +74,7 @@ the browser and the installation wizard soon pops up.
 <br />
 <img src="https://i.imgur.com/n7CoXDh.png" height="50%" width="50%" alt="Downloading Docker"/>
 <br />
-Click <b>Finish</b>, but don't start the VM yet!
+
 <br />
 <img src="https://i.imgur.com/n7CoXDh.png" height="60%" width="60%" alt="System Requirements"/>
 <br />
@@ -127,34 +127,57 @@ To ensure that I implemented these instructions correctly, I open a PowerShell w
 command <b>“wsl -l -v”</b> to view what version of WSL I have, which showed sufficient results. Still on the PowerShell, I
 enter <b>“npm install -g fleetctl”</b> on the command line to install the Fleet command-line tool.
 <br />
-<img src="https://i.imgur.com/9bgwpRL.png" height="75%" width="75%" alt=""/>
+<img src="https://i.imgur.com/9bgwpRL.png" height="75%" width="75%" alt="WSL version"/>
 <br />
-We'll click <b>Next</b> and accept the terms and conditions. Then, we'll choose a <b>Custom</b> installation of Windows.
+
+
+From running that, it prompts me to run the command <b>“npm install -g npm@8.15.1”</b> to update npm for the correct
+packages.
 <br />
-<img src="https://i.imgur.com/Zgy0KNX.png" height="75%" width="75%" alt="Custom: Install Windows..."/>
+<img src="https://i.imgur.com/XHpKTRb.png" height="75%" width="75%" alt="npm install -g npm@8.15.1"/>
 <br />
-Click <b>Next</b> and wait for the installation to finish.
-<br />
-<img src="https://i.imgur.com/iDtp03c.png" height="55%" width="55%" alt="Installing Windows"/>
-<br />
-Enter a local administrator password and keep it in your records.
-<br />
-<img src="https://i.imgur.com/YfhVRHt.png" height="75%" width="75%" alt="Customize Settings"/>
-<br />
-Now, with VirtualBox, we'll click <b>Input</b> > <b>Keyboard</b> > <b>CTRL + ALT + DEL</b> to enter <b>CTRL + ALT + DEL</b> into the VM, and log in with your local Administrator password.
-<br />
-<img src="https://i.imgur.com/8JxQdlk.png" height="75%" width="75%" alt="Administrator Login"/>
-<br />
-Now, we'll configure the Server's Network Interface. In my environment, the pfSense DHCP service has been disabled for the AD (Active Directory) lab LAN, because we want the domain controller to act as the DHCP server for the client Windows computers. Therefore, we'll need to manually configure the domain controller.
+
+
+Once the update is complete, I move on to enter <b>“fleetctl preview”</b> into the command line and this error appears. It
+seems that I cannot execute the command due to the Execution Policy of my PowerShell. I must reset it in a way that
+I will be able to bypass my PowerShell’s Execution Policy and run the command, <b>“fleetctl preview”</b> to run a demo of
+the Fleet server.
 
 <br />
-To get started, on the Windows Server 2019 VM, we'll right-click the network interface icon and choose <b>Open Network & 
- Internet Settings</b>
- 
+<img src="https://i.imgur.com/g80LMdW.png" height="65%" width="65%" alt="fleetctl preview error"/>
 <br />
-<img src="https://i.imgur.com/2DV62M9.png" height="15%" width="15%" alt="Network Interface Icon"/>
+After doing some research on the execution policies in PowerShell, I must change the execution policy by entering
+<b>“Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass”</b>. The <b>“Set-ExecutionPolicy”</b> cmdlet uses the
+**`ExecutionPolicy`** parameter to specify the policy. The **`Scope`** parameter specifies the default scope value, and the <b>“-
+Execution Policy Bypass”</b> section of the cmdlet specifies the execution policy Bypass. Where nothing is blocked and
+there are no warnings or prompts.
 <br />
-<img src="https://i.imgur.com/pT0crPJ.png" height="35%" width="35%" alt="Open Network & Internet Settings"/>
+<img src="https://i.imgur.com/gy8OkTD.png" height="65%" width="65%" alt="Execution policies"/>
+<br />
+Once I executed the Execution Policy change, I run the <b>“fleetctl preview”</b> command again and this time it went
+through. I had to power up Docker in the background for the command to run correctly because running the <b>“fleetctl
+preview”</b> command without a Docker daemon running in the background will result in an error, as shown below.
+<br />
+<img src="https://i.imgur.com/hi1T9xx.png" height="55%" width="55%" alt="fleetctl preview"/>
+<br />
+I allowed access to my system’s resources to the Docker Desktop Backend to run the Fleet UI, where I can run some
+queries on the Fleet OSQuery.
+
+<br />
+<img src="https://i.imgur.com/IBcdCcE.png" height="55%" width="55%" alt="allow access"/>
+<br />
+
+As shown below the execution was successful, I was able to run a local demo of the Fleet server.
+
+<br />
+<img src="https://i.imgur.com/jM2OsEd.png" height="75%" width="75%" alt="Established OSQuery Fleet"/>
+<br />
+
+
+By running “fleetctl preview” in admin mode in a PowerShell window it automatically adds my Windows host
+machine as a host to the list of devices on the Fleet server as shown below.
+<br />
+<img src="https://i.imgur.com/u3SlvUF.png" height="65%" width="65%" alt="System added to Fleet server"/>
 <br />
 Scroll down and choose <b>Change adapter options</b>
 <br />
