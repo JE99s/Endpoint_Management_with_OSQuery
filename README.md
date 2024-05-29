@@ -5,11 +5,13 @@
 - <b>CLI (Command Line Interface)</b>
 - <b>OSQuery</b>
 - <b>A little bit of PowerShell</b>
+- <b>And a little bit of SQL</b>
 
 <h2>Environments Used</h2>
 
 - <b>Windows 10 (Host Computer)</b>
 - <b>VirtualBox Hypervisor </b>
+- <b>Kali Linux</b>
 
 <h2>Lab Walk-through:</h2>
 <p>I've explored a little about the critical administrative functions of system logging to configuring host-based
@@ -148,7 +150,7 @@ the Fleet server.
 <br />
 After doing some research on the execution policies in PowerShell, I must change the execution policy by entering
 <b>“Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass”</b>. The <b>“Set-ExecutionPolicy”</b> cmdlet uses the
-**`ExecutionPolicy`** parameter to specify the policy. The **`Scope`** parameter specifies the default scope value, and the <b>“-
+'ExecutionPolicy' parameter to specify the policy. The 'Scope' parameter specifies the default scope value, and the <b>“-
 Execution Policy Bypass”</b> section of the cmdlet specifies the execution policy Bypass. Where nothing is blocked and
 there are no warnings or prompts.
 <br />
@@ -177,586 +179,332 @@ As shown below the execution was successful, I was able to run a local demo of t
 By running “fleetctl preview” in admin mode in a PowerShell window it automatically adds my Windows host
 machine as a host to the list of devices on the Fleet server as shown below.
 <br />
-<img src="https://i.imgur.com/u3SlvUF.png" height="65%" width="65%" alt="System added to Fleet server"/>
+<img src="https://i.imgur.com/u3SlvUF.png" height="75%" width="75%" alt="System added to Fleet server"/>
 <br />
-Scroll down and choose <b>Change adapter options</b>
+The Fleet UI (fleet for osquery dashboard) loaded up for me. Now I can attempt to run my own queries.
 <br />
-<img src="https://i.imgur.com/Kxz9gZD.png" height="50%" width="50%" alt="Change adapter options"/>
+<img src="https://i.imgur.com/QPw4ozC.png" height="70%" width="70%" alt="Fleet for osquery dashboard"/>
 <br />
-Right-click the adapter and choose <b>Properties</b>
-<br />
-<img src="https://i.imgur.com/JfJF1qu.png" height="60%" width="60%" alt="Properties"/>
-<br />
-Double-click <b>Internet Protocol Version 4 (TCP/IPv4)</b>
-<br />
-<img src="https://i.imgur.com/qhEDaJG.png" height="80%" width="80%" alt="IPv4"/>
-<br />
-We'll configure the adapter as follows:
-<br />
-<img src="https://i.imgur.com/bvM9p9A.png" height="80%" width="80%" alt="Use the following IP address"/>
-<br />
-So, for the DNS Server...two things:
-
-- First, check with the DNS server running on the domain controller (we'll install it in a bit)
-- If the DNS server doesn't know the answer, it will forward the DNS query to the default gateway and pfSense will resolve it
+I navigate to the “Queries” tab on the top of the Fleet UI interface to run my own queries there. On the page there
+are queries for me to try listed as well. From here, I will run five queries and witness their results after running each
+one.
 
 
-<h3>Rename the Server</h3>
-Now we'll rename our Windows Server 2019 by clicking the <b>Start Menu</b> and click <b>Settings</b>
+<h3>Query 1</h3>
+I’m going to start with listing my host machine’s processes by entering:
 <br />
-<img src="https://i.imgur.com/WbiYkia.png" height="40%" width="40%" alt="Settings > System"/>
+<img src="https://i.imgur.com/IlRpaJW.png" height="60%" width="60%" alt="SELECT * FROM processes"/>
 <br />
-<img src="https://i.imgur.com/1lwhOUj.png" height="40%" width="40%" alt="About"/>
+I am selecting all the columns of data available within the ‘processes’ table using SQL while writing this query. From
+running this query, so many results have appeared as shown below. This query lists for five columns the command line, elapsed time, name of the process, pid, and root of each listed process.
 <br />
-<img src="https://i.imgur.com/YBoIL9J.png" height="40%" width="40%" alt="Rename this PC"/>
+<img src="https://i.imgur.com/YXFVqUs.png" height="80%" width="80%" alt="Query 1 Results"/>
 <br />
-Enter DC1 as the name for the domain controller
-<br />
-<img src="https://i.imgur.com/R0jMYtX.png" height="75%" width="75%" alt="Rename to DC1"/>
-<br />
-Choose <b>Restart Now</b>. If a reason is required, choose <b>Other (planned)</b>.
 
-<h3>Take Snapshot of the VM</h3>
-In the VirtualBox VM manager, next to the Windows Server 2019 machine, click the menu icon and choose <b>Snapshots</b>.
+<h3>Query 2</h3>
+For my second query, I want to see who is logged into the system by entering:
 <br />
-<img src="https://i.imgur.com/wkqbEyO.png" height="60%" width="60%" alt="Choose Snapshots"/>
+<img src="https://i.imgur.com/SN2yIDR.png" height="60%" width="60%" alt="SELECT * FROM logged_in_users"/>
 <br />
-Click the <b>Take</b> button
-<br />
-<img src="https://i.imgur.com/pVTeu44.png" height="25%" width="25%" alt="Take button"/>
-<br />
-We can fill out the Snapshot entry with something like this:
-<br />
-<img src="https://i.imgur.com/8SjDYYN.png" height="45%" width="45%" alt="Description"/>
-<br />
-Click <b>OK</b>. Now, we can restore this snapshot any time if we want to roll back to a pre-domain install.
+From running this query, I am provided the columns associated with the ‘logged_in_users’ table such as the
+hostname, pid, time, type, and tty of the process, as shown below.
 
-<h3>Configure Domain Services</h3>
-Now, we'll reboot our DC1 (Windows Server 2019) VM. Once it is on, click <b>Manage</b> > <b>Add Roles and Features</b>
 <br />
-<img src="https://i.imgur.com/VQYqYo1.png" height="55%" width="55%" alt="Manage"/>
+<img src="https://i.imgur.com/xYPVkH2.png" height="80%" width="80%" alt="Query 2 results"/>
 <br />
-Click <b>Next</b> > <b>Next</b> > <b>Next</b> until you reach <b>Server Roles</b>. Check the following boxes:
 
-- <b>Active Directory Domain Services</b>
-- <b>DNS Server</b> (so we can resolve the domain controller by DNS name)
+<h3>Query 3</h3>
+For my third query, I want to know I what are the top 5 most memory intensive processes. I do this by entering the
+following SQL query.
+<br />
+<img src="https://i.imgur.com/pQJrdGE.png" height="70%" width="70%" alt="Query 3"/>
+<br />
+
+In this query, I use the <b>SELECT</b> SQL clause to retrieve the pid, name, a numeric or percentage columns from the
+processes table by using the <b>FROM</b> clause listing the ‘processes’ table and join information. The <b>ORDER</b> clause will sort the numerical results by ‘total_size’ in a descending order which is calculated within the <b>ROUND</b> clause, and since I want to only see the top 5 processes that use the most memory, I use the <b>LIMIT</b> clause to limit the query results by 5. This is shown in the screenshot below.
+
+<br />
+<img src="https://i.imgur.com/BPjtKFi.png" height="80%" width="80%" alt="Query 3 results"/>
+<br />
+
+<h3>Query 4</h3>
+On my fourth query, I can list my system information by entering the following query to retrieve information on the
+type of CPU, the brand, the hardware vendor and model of my Windows host machine from the ‘system_info’ table,
+as shown below.
+<br />
+<img src="https://i.imgur.com/xRxrFfC.png" height="60%" width="60%" alt="select cpu_type,..."/>
+<br />
+Since I am running my queries on just one machine (my host), one result is listed from the query execution. Most of
+the information from these columns on the resulting table I should know, except for the hardware model.
+
+<br />
+<img src="https://i.imgur.com/TNVVFTY.png" height="85%" width="85%" alt="Query 4 results"/>
+<br />
+
+
+<h3>Query 5</h3>
+For my fifth query, I have an interest in compiling certain information listed out from the ‘drivers’ table on my
+Windows machine. I will use the <b>SELECT</b> clause to retrieve information on the (hostname by default) device_name
+and version extracted from the ‘drivers’ table using the <b>FROM</b> clause, as shown below.
+<br />
+<img src="https://i.imgur.com/NswesQv.png" height="60%" width="60%" alt="SELECT device_name, version FROM drivers"/>
+<br />
+Once I run the query, I am met with over 200 results listing the device names, hostname, and the version of the
+driver on the table shown below.
+<br />
+<img src="https://i.imgur.com/QRd2mDt.png" height="75%" width="75%" alt="Query 5 results"/>
+<br />
+You can also check for to see if drivers are signed as well, as shown below.
+<br />
+<img src="https://i.imgur.com/FBeeACe.png" height="55%" width="55%" alt="Query 5.2"/>
+<br />
+IT and security administrators review drivers in this similar fashion to verify proper installation of required drivers
+and ensuring that the correct versions of popular drivers are installed.
+
+
+<br />
+<img src="https://i.imgur.com/rSDvxsd.png" height="75%" width="75%" alt="Query 5.2 results"/>
+<br />
+
+<h3>Installing and Deploying OSQuery on Kali Linux</h3>
+Now that I have essentially installed and deployed OSQuery on my Windows machine, I will now proceed to do the
+same with my Kali Linux VM.
+
+
+**Disclaimer** You might run into some issues while running VirtualBox after installing WSL 2.0 on your local Windows machine. To mitigate that we can disable <b>WSL 2.0</b> and enable the “Windows Hypervisor Platform” again from the Window Features menu. Once I do that, I restart my machine and things should run smoothly to install and run fleet on a Linux VM. We might have to switch back and forth between enabling and disabling while working on queries on the Windows machine. Essentially, for working on a Linux VM, I would re-enable the Windows Hypervisor platform feature every time to use a VM.
+
+
+
+<br />
+<img src="https://i.imgur.com/y6isC6C.png" height="55%" width="55%" alt="Re-enable Windows Hypervisor Platform"/>
+<br />
+
+
+Now I boot up my Kali Linux VM and will download Node.js, NPM, Docker, and Docker-Compose. First, I will install Node.js and NPM installer through the Kali Linux terminal by adding the Node.js repository to my system.
+
+<br />
+<img src="https://i.imgur.com/htxdQAL.png" height="55%" width="55%" alt="add node.js repo to Kali with curl command"/>
+<br />
+<br />
+
+Once I added the node repository to my VM, I enter “<b>sudo apt update</b>” into the command line to essentially let my
+Kali Linux machine know that I have added a new repository to the system.
+<br />
+<img src="https://i.imgur.com/A290nEx.png" height="55%" width="55%" alt="sudo apt update"/>
+<br />
+
+
+I have everything I need on my system to install Node.js. I proceed to install the latest Node.js version on my Kali
+Linux machine by entering “<b>sudo apt install nodejs</b>” into the command line. To confirm the installation, I enter
+“<b>node -v</b>” to show my current Node.js version. I assumed that from installing the Node.js packages it would include
+the NPM package manager, but when I enter the command: “<b>npm -v</b>” to check the version, the command was not
+found. However, the command line prompted me if I wanted to go ahead and install NPM, so I enter “y” to go ahead
+and execute the “<b>sudo apt install npm</b>” command to install NPM. To confirm its installation, I enter “<b>npm -v</b>” for the most recent version of NPM to pop up, as shown below.
+
+<br />
+<img src="https://i.imgur.com/1wqTOr0.png" height="75%" width="75%" alt="confirm node and npm installation"/>
+<br />
+
+
+Now that I finished installing Node.js and NPM on my Kali Linux VM, I will proceed to install Docker and DockerCompose for my Linux machine for smooth installation of Fleet OSQuery on my Kali Linux VM.
+
+
 
 <figure>
-  <img src="https://i.imgur.com/e4TXHcF.png" alt="Click Add Features" style="width:70%">
-  <figcaption>Click Add Features</figcaption>
-</figure>
-<br />
-<br />
-
-<figure>
-  <img src="https://i.imgur.com/FKwNcLV.png" alt="Click Add Features" style="width:70%">
-  <figcaption>Click Add Features</figcaption>
-</figure>
-
-<br />
-
-<br />
-Click <b>Next</b> > <b>Install</b>. Wait for the installation to finish and click <b>Close</b>
-<br />
-<img src="https://i.imgur.com/1KiGLj6.png" height="75%" width="75%" alt="Feature Installation"/>
-<br />
-<h3>Configure Active Directory Domain Services</h3>
-Log back into the domain controller (if you've taken a break) as the local administrator and wait for the Server Manager app to load. On the top ribbon of the Dashboard, click the flag icon with the alert:
-<br />
-<img src="https://i.imgur.com/dPQMT2a.png" height="20%" width="20%" alt="Flag"/>
-<br />
-<figure>
-  <img src="https://i.imgur.com/ErVyPyZ.png" alt="Click Promote this server to a DC" style="width:50%">
-  <figcaption>Click <b>Promote this server to a domain controller</b></figcaption>
-</figure>
-<br />
-<br />
-Choose <b>Add a new forest</b> and specify a <b>root domain name</b>. I chose <b>ad.lab</b> as my domain name, but you can choose any other local TLD (e.g., .com, .org, .net). Also, it is best to avoid using <b>.local</b> because that can interfere with multicast traffic.
-<br />
-<img src="https://i.imgur.com/IZ5JcmE.png" height="60%" width="60%" alt="add a new forest"/>
-<br />
-Click <b>Next</b>. The default options are fine. Specify a <b>restore password</b>. You can use the same password as the local admin or something different. It doesn't matter. Click <b>Next</b>.
-<img src="https://i.imgur.com/21eNC4n.png" height="70%" width="70%" alt="DSRM"/>
-<br />
-<figure>
-  <img src="https://i.imgur.com/7h9ourc.png" alt="DNS delegation" style="width:30%">
-  <figcaption>Ignore the message</figcaption>
-</figure>
-<br />
-<br />
-Click <b>Next</b> and continue with the defaults
-<br />
-<img src="https://i.imgur.com/y1EHwNu.png" height="65%" width="65%" alt="Specify the location..."/>
-<br />
-Looks good. Click <b>Install</b> and wait for it to complete.
-<br />
-<img src="https://i.imgur.com/tVxnyei.png" height="75%" width="75%" alt="Install"/>
-<br />
-The server will automatically reboot afterwards. Be patient, it might take a while.
-<br />
-<img src="https://i.imgur.com/iEU6kYR.png" height="60%" width="60%" alt="rebooting"/>
-<br />
-<h3>Configure Active Directory Certificate Services</h3>
-Active Directory Certificate Services will be installed to enable LDAPs. Log back into the domain controller as the local administrator and wait for the Server Manager application to load. Once it's open, go to <b>Manage > Add Roles and Features</b>.
-<br />
-<img src="https://i.imgur.com/gr5XxN3.png" height="45%" width="45%" alt="Add Roles and Features"/>
-<br />
-Click <b>Next</b> > <b>Next</b> > <b>Next</b> > Choose <b>Active Directory Certificate Services</b>
-<br />
-<figure>
-  <img src="https://i.imgur.com/IJ2NdWs.png" alt="DNS delegation" style="width:60%">
-  <figcaption>Click <b>Add Features</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-Click <b>Next</b> > <b>Next</b> > <b>Next</b> > <b>Next</b>. For AD CS, choose the <b>Certificate Authority</b> role service.
-<br />
-<img src="https://i.imgur.com/M8rXjmM.png" height="80%" width="80%" alt="Certification Authority"/>
-<br />
-<img src="https://i.imgur.com/fi3FPXs.png" height="80%" width="80%" alt="View Installation Progress"/>
-<br />
-Click on the alert icon and click on the text to <b>Configure Active Directory Certificate Services</b>
-<br />
-<img src="https://i.imgur.com/ImVmtem.png" height="60%" width="60%" alt="Alert"/>
-<br />
-Click <b>Next</b>, then select the service role to configure. Click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/ZvmYyH0.png" height="70%" width="70%" alt="Select Role services to configure"/>
-<br />
-Choose <b>Enterprise CA</b> and click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/kI4kSFc.png" height="70%" width="70%" alt="Enterprise CA"/>
-<br />
-We're just going to use the default settings. Click <b>Next</b> > <b>Next</b> > <b>Next</b> > <b>Next</b> > <b>Next</b> > <b>Next</b> > <b>Configure</b>
-
-<h3>Configure DNS Forwarders</h3>
-The DNS server running on the domain controller will act as a resolver for the ad.lab domain (or whichever local domain you chose). We need a forwarder for any DNS query for which the DNS server does not know the answer. We can use the pfSense default gateway as a downstream DNS server that the domain controller can pass queries to for any unknown hostnames.
-<br />
-<br />
-Still on the DC1 VM, open up the Start Menu and search for <b>DNS</b>
-<br />
-<img src="https://i.imgur.com/650QBqg.png" height="25%" width="25%" alt="DNS"/>
-<br />
-Expand <b>DNS</b> > <b>DC1</b> and double-click <b>Forwarders</b>
-<br />
-<img src="https://i.imgur.com/u4Sn7DG.png" height="75%" width="75%" alt="Forwarders"/>
-<br />
-Click <b>Edit</b> and add the IP address of the default gateway (mine is the following). Click <b>OK</b>.
-<br />
-<img src="https://i.imgur.com/u4Sn7DG.png" height="55%" width="55%" alt="Forwarders"/>
-<br />
-<img src="https://i.imgur.com/wErn29S.png" height="75%" width="75%" alt="Edit Forwarders"/>
-<br />
-
-<h3>Add and Configure a DHCP Server</h3>
-Next, we'll open the Server Manager and go to <b>Manage</b> > <b>Add Roles and Features</b>
-<br />
-<img src="https://i.imgur.com/gr5XxN3.png" height="45%" width="45%" alt="Add Roles and Features"/>
-<br />
-Click <b>Next</b> > <b>Next</b> > <b>Next</b>
-<br />
-<br />
-Click <b>DHCP Server</b>
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/cvbRxBm.png" alt="DHCP Server" style="width:60%">
-  <figcaption>Click <b>Add Features</b> and click <b>Next</b> > <b>Next</b> <b>Next</b> > <b>Install</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-Once the installation is complete, click on <b>Complete DHCP Configuration</b>
-<br />
-<img src="https://i.imgur.com/xSB0jCs.png" height="75%" width="75%" alt="DHCP Feature Installation"/>
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/cvbRxBm.png" alt="DHCP Server" style="width:60%">
-  <figcaption>Click <b>Next</b> > <b>Commit</b> > <b>Close</b> > <b>Close</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-
-Go to the <b>Start Menu</b> and search <b>DHCP</b>
-<br />
-<img src="https://i.imgur.com/tjRnMsk.png" height="25%" width="25%" alt="DHCP"/>
-<br />
-Expand the DHCP server tree and right-click <b>IPv4</b> and choose <b>New Scope</b>
-<br />
-<img src="https://i.imgur.com/eJP0AQj.png" height="45%" width="45%" alt="New Scope"/>
-<br />
-Click <b>Next</b> and give your DHCP configuration a name and description. Then, click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/efbEwHf.png" height="55%" width="55%" alt="Name & Description"/>
-<br />
-Configure the <b>DHCP address space</b> and <b>subnet mask</b>. Then, click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/oquEzTY.png" height="55%" width="55%" alt="Address space and subnet mask"/>
-<br />
-We're not configuring any DHCP exclusions (reservations), so click <b>Next</b>. We'll make it so clients' leases are good for one year. Click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/ju3GKVr.png" height="75%" width="75%" alt="Lease Duration"/>
-<br />
-Click <b>Next</b> to configure it now
-<br />
-<img src="https://i.imgur.com/Psgs4Cv.png" height="75%" width="75%" alt="Configure it now"/>
-<br />
-Enter the address of the default gateway and click <b>Add</b>.
-<br />
-<img src="https://i.imgur.com/1iaYiYx.png" height="75%" width="75%" alt="Click Add"/>
-<br />
-The default DNS configuration for DHCP clients is good here. Click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/bIOpayu.png" height="75%" width="75%" alt="DNS Servers"/>
-<br />
-We don't have a WINS server in our lab environment. Click <b>Next</b>.
-<br />
-<img src="https://i.imgur.com/RjMI06j.png" height="75%" width="75%" alt="No WINS Servers"/>
-<br />
-Click <b>Next</b> to activate the DHCP scope and click <b>Finish</b>.
-<br />
-<img src="https://i.imgur.com/UOg1LBK.png" height="45%" width="45%" alt="Activiate Scope now"/>
-<br />
-
-<h3>Add a Domain Administrator Account</h3>
-Still on our domain controller (DC1), go to the <b>Start Menu</b> and search for <b>Active Directory Users and Computers</b> and open the app.
-<br />
-<img src="https://i.imgur.com/OUEd1t4.png" height="45%" width="45%" alt="Active Directory Users and Computers"/>
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/Kyb5lF6.png" alt="Right click for New User" style="width:50%">
-  <figcaption><b>ad.lab</b> > <b>Right-click Users</b> > <b>New</b> > <b>User</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/U36Ap5u.png" alt="New User details" style="width:60%">
-  <figcaption>Fill out the fields with the User details</figcaption>
-</figure>
-<br />
-<br />
-<br />
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/XD01EsV.png" alt="Password options" style="width:60%">
-  <figcaption>Set the password and password options</figcaption>
-</figure>
-<br />
-<br />
-<br />
-We've just created a new user which will be another administrator account for the AD forest. We will now assign him to the 'Domain Admins' group.
-Click <b>Users</b> > <b>Domain Admins</b>
-<br />
-<img src="https://i.imgur.com/2DWI3hO.png" height="25%" width="25%" alt="Domain Admins"/>
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/SzIOYxr.png" alt="Password options" style="width:50%">
-  <figcaption>Enter the domain administrator username and click <b>Check Names</b>. Click <b>OK</b> > <b>OK</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-<br />
-<img src="https://i.imgur.com/sJKd32q.png" height="65%" width="65%" alt="Domain Admins Properties"/>
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/2mfML45.png" alt="Sign out" style="width:40%">
-  <figcaption>Sign out of the local administrator account</figcaption>
-</figure>
-<br />
-<br />
-<br />
-<br />
-
-<h3>Add Some Users to the Lab</h3>
-Log in as the new domain administrator
-<br />
-<img src="https://i.imgur.com/3eZotPY.png" height="75%" width="75%" alt="Log in as new admin"/>
-<br />
-<br />
-
-Once logged in, go to the <b>Start Menu</b>. Search for <b>Active Directory Users and Computers</b> and open the app.
-<br />
-<img src="https://i.imgur.com/OUEd1t4.png" height="45%" width="45%" alt="Active Directory Users and Computers"/>
-<br />
-
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/Kyb5lF6.png" alt="Right click for New User" style="width:50%">
-  <figcaption><b>ad.lab</b> > <b>Right-click Users</b> > <b>New</b> > <b>User</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-<h4>John Doe</h4>
-<br />
-<img src="https://i.imgur.com/wMuNVIm.png" height="65%" width="65%" alt="John Doe User Details"/>
-<br />
-<br />
-<img src="https://i.imgur.com/ZlxWYLa.png" height="65%" width="65%" alt="John Doe User Password & Passwd opts."/>
-<br />
-
-<h4>Jane Doe</h4>
-
-<br />
-<img src="https://i.imgur.com/83IwDko.png" height="65%" width="65%" alt="Jane Doe User Details"/>
-<br />
-<br />
-<img src="https://i.imgur.com/1Aau9W4.png" height="65%" width="65%" alt="Jane Doe User Password & Passwd opts."/>
-<br />
-
-<h3>Windows 10 Enterprise Template</h3>
-We'll navigate back to VirtualBox VM manager and power on the Windows 10 Enterprise Template VM.
-<br />
-<br />
-Choose your language and click <b>Next</b>
-<br />
-<img src="https://i.imgur.com/BCToWpd.png" height="65%" width="65%" alt="Choose Language"/>
-<br />
-
-Choose <b>Install Now</b> and accept the terms and conditions. Choose <b>Custom: Install Windows Only</b>.
-<br />
-<img src="https://i.imgur.com/XDHodFw.png" height="55%" width="55%" alt="Custom"/>
-<br />
-
-<br />
-Click <b>Next</b>. Wait for the installation to finish.
-<br />
-<img src="https://i.imgur.com/SbWlTdA.png" height="65%" width="65%" alt="Installing Windows"/>
-<br />
-
-<br />
-Select your regional and language settings. Choose <b>Domain join instead</b>
-<br />
-<img src="https://i.imgur.com/4mR3BKn.png" height="25%" width="25%" alt="Domain join instead"/>
-<br />
-
-<br />
-Enter the username Template, as this is going to be our template VM.
-<br />
-<img src="https://i.imgur.com/aJ3jTv9.png" height="75%" width="75%" alt="Template"/>
-<br />
-
-<br />
-Enter a password and set security questions. Save the information in your records.
-<br />
-<br />
-
-
-Turn off all the services here:
-<br />
-<img src="https://i.imgur.com/MRaWJqr.png" height="75%" width="75%" alt="Disabled services"/>
-<br />
-
-Choose <b>Not now</b> for Cortana.
-<br />
-
-<h3>Sysrep the Template</h3>
-***We want to run <b>sysrep</b> to create a template VM, so that when we clone the VM, the Windows systems will always have a unique SID when joining the domain.***
-
-<br />
-To get started, let's log into the system using the template credentials and open a PowerShell terminal as administrator.
-
-<br />
-Run the command
-<br />
-<img src="https://i.imgur.com/XeQEDdM.png" height="75%" width="75%" alt="PS command"/>
-<br />
-
-<br />
-Click <b>OK</b>. Let the sysprep process run to completion. The VM should shutdown.
-<br />
-
-<h3>Windows 10 Enterprise VM 1</h3>
-Right-click the <b>Windows 10 Enterprise Template</b> and choose <b>Clone</b>. Give the cloned VM a name such as <b><i>Win10Ent1</i></b>. Click <b>Clone</b> and move on to the next one.
-<br />
-<img src="https://i.imgur.com/9AvLfDB.png" height="75%" width="75%" alt="Win10Ent1"/>
-<br />
-
-<h3>Windows 10 Enterprise VM 2</h3>
-Same thing goes for another clone. Right-click the <b>Windows 10 Enterprise Template</b> and choose <b>Clone</b>. Give the cloned VM a name such as <b><i>Win10Ent2</i></b>. Click <b>Clone</b> and wait for the process to complete
-
-<br />
-<h3>Joining the Computers to the Domain</h3>
-I will only demonstrate this process on one of the VMs. Follow along and repeat this process on any other clients you would want to join to the domain.
-<h4>Windows 10 Enterprise VM 1</h4>
-**Because we selected the Out-of-Box-Experience (OOBE) when running sysprep on the template — which is the correct choice — we are required to run the through the Windows setup again as a newly issued computer.
-<br />
-
-This is essentially the same thing as receiving a newly imaged Windows computer from your employer and joining it to the local domain.**
-<br />
-
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/5D3ABko.png" alt="Domain join instead" style="width:70%">
-  <figcaption>Choose <b>Domain join instead</b></figcaption>
-</figure>
-<br />
-<br />
-<br />
-
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/JP8wuQc.png" alt="Domain join instead" style="width:70%">
-  <figcaption>Set up a password and security questions. Save them for later use.</figcaption>
-</figure>
-<br />
-<br />
-<br />
-
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/vhmMInF.png" alt="Disable services" style="width:70%">
-  <figcaption>Once again, disable these settings</figcaption>
-</figure>
-<br />
-<br />
-<br />
-
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/Uci7qzy.png" alt="Disable services" style="width:50%">
-  <figcaption>Choose <b>Not now</b> for Cortana</figcaption>
+  <img src="https://i.imgur.com/YBtj11N.png" alt="sudo apt update && sudo..." style="width:70%">
+  <figcaption>It took a solid 10 minutes for the installation to finish</figcaption>
 </figure>
 <br />
 <br />
 
 
 <br />
-If you're prompted to allow your PC to be discoverable in the network, choose <b>Yes</b> for the sake of this lab. Once you're logged in, go to the <b>Start Menu</b> > <b>Search for This PC</b> > <b>Right-click</b> > <b>choose Properties</b>
-<br />
-<img src="https://i.imgur.com/5wslnT9.png" height="25%" width="25%" alt="This PC"/>
+<img src="https://i.imgur.com/dwWvuvo.png" height="65%" width="65%" alt="more package installation"/>
 <br />
 
 
+Before installing Docker and Docker-Compose, I need to make sure that all the packages used by Docker as
+dependencies are installed, as shown below.
 <br />
+<img src="https://i.imgur.com/WbOU63H.png" height="75%" width="75%" alt="confirm Docker and Docker-compose pkg installation"/>
 <br />
+
+
+Then I enter “<b>[ -f /var/run/reboot-required ] && sudo reboot -f</b>” to check if a reboot is required after the lengthy
+upgrade. Next, I will import the Docker GPG key used for signing Docker packages by entering “<b>curl -fsSL
+https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/trusted/gpg.d/docker-archivekeyring.gpg</b>” into the command line. I will add the Docker repository which contains the latest stable releases of Docker Community Edition (CE) by entering the command “<b>echo "deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable" | sudo tee /etc/apt/sources.list.d/docker.list</b>”. This command will add that repository URL to <b>/etc/apt/source.list.d/docker.list</b>
 <br />
-<figure>
-  <img src="https://i.imgur.com/9bawckY.png" alt="Advance sys settings" style="width:40%">
-  <figcaption>Go to <b>Advanced system settings</b></figcaption>
-</figure>
+<img src="https://i.imgur.com/BA3CA0C.png" height="75%" width="75%" alt="echo deb arch=amd64..."/>
+<br />
+
+
+Before I’m ready to install Docker on Kali Linux, I make sure that I update the apt package index by entering “<b>sudo
+apt update</b>” in the command line. Now, to install Docker CE on Kali Linux I run the command “<b>sudo apt install
+docker-ce docker-ce-cli containerd.io</b>”, and enter the ‘y’ key to start the installation.
+<br />
+<img src="https://i.imgur.com/PMuaDfB.png" height="75%" width="75%" alt="sudo apt install..."/>
+<br />
+
+
+This installation will add docker group to the system without any users. I add my user account to the group to run
+docker commands as a non-privileged user.
+<br />
+<img src="https://i.imgur.com/R1qNf7i.png" height="45%" width="45%" alt="sudo usermod -aG..."/>
+<br />
+
+
+Docker is installed, I confirm by entering “<b>docker version</b>” in the command line to view the Docker version and other
+information as shown below.
+<br />
+<img src="https://i.imgur.com/j4DKaL1.png" height="75%" width="75%" alt="docker  version"/>
+<br />
+
+
+Now I want to install Docker Compose on my Kali Linux VM. First, I must ensure that I have the command line tools <b>curl</b> and <b>wget</b> for this operation. I do this by entering “<b>sudo apt update</b>” and “<b>sudo apt install -y curl wget</b>”. As shown below, it seems that I already have it installed. Now, I am ready to download the latest Docker Compose on my Linux machine. I do this by entering “<b>curl -s https://api.github.com/repos/docker/compose/releases/latest | grep browser_download_url | grep docker-compose-linux-x86_64 | cut -d '"' -f 4 | wget -qi -</b>” in the command line.
+<br />
+<img src="https://i.imgur.com/9oAOdpM.png" height="75%" width="75%" alt="sudo apt install -y curl wget"/>
+<br />
+
+
+I make the binary file executable by entering “<b>chmod +x docker-compose-linux-x86_64</b>”. I proceed to move the file
+to my PATH by entering “<b>sudo mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose</b>” into the
+command line. Then I confirm the version. I have successfully installed the required prerequisites for running Fleet
+OSQuery on my Kali Linux VM
+<br />
+<img src="https://i.imgur.com/tT9tizw.png" height="45%" width="45%" alt="docker-compose version"/>
+<br />
+
+
+Now I am ready to install Fleet OSQuery to run five queries on my Kali Linux machine. I want to go the same route I
+went for my Windows machine, so on my terminal I will enter the command “<b>sudo npm install -g fleetctl</b>” to install
+the packages needed for the Fleet server with an escalated root privilege. Once that is executed, I proceed further by
+entering “<b>sudo fleetctl preview</b>” to start a server and open the Fleet UI webpage to run my own queries within it.
+<br />
+<img src="https://i.imgur.com/eW3yBnV.png" height="75%" width="75%" alt="look at Fleet preview"/>
+<br />
+The Fleet UI (fleet for osquery dashboard), as shown below loaded up for me. Now I can attempt to run my own
+queries.
+<br />
+<img src="https://i.imgur.com/3Xt4aCq.png" height="75%" width="75%" alt="Fleet UI osquery dashboard for Kali"/>
+<br />
+
+
+I navigate the “Queries” tab on the top of the Fleet UI interface to run my own queries there. On the page there are
+queries for me to try listed. Compatible with macOS, Windows, Linux, or all three. I select the “Create new query”
+button to get started.
+<br />
+<img src="https://i.imgur.com/bjRLM88.png" height="65%" width="65%" alt="create a new query"/>
+<br />
+Just for kicks, I decide to run a query that was already in the Query compiler: 
+<br />
+<img src="https://i.imgur.com/NkL4sHw.png" height="65%" width="65%" alt="New query"/>
+<br />
+I run the query and from the results it shows me information about the targeted host (my Linux machine in this case)
+such as the build_distro, hostname, version, pid, and more from the ‘osquery_info’ table, as shown below.
+<br />
+<img src="https://i.imgur.com/gRXMpJV.png" height="75%" width="75%" alt="New query results"/>
+<br />
+
+<h3>Query 1</h3>
+To start myself off, I want a count of all the users on my Linux machine. I can retrieve this information from the
+‘users’ table. I enter the query shown below.
+<br />
+<img src="https://i.imgur.com/nvTw2lA.png" height="60%" width="60%" alt="SELECT COUNT(*) FROM users"/>
+<br />
+As a result, there are 55 users within my Linux machine.
+<br />
+<img src="https://i.imgur.com/S4U2h2D.png" height="80%" width="80%" alt="Query 1 Results"/>
+<br />
+
+<h3>Query 2</h3>
+I am going to run a query that retrieves the information of my available machine, associated with the ‘uptime’ table
+as shown below..
+<br />
+<img src="https://i.imgur.com/bqegN6J.png" height="45%" width="45%" alt="SELECT * from uptime"/>
+<br />
+This query shows me the that it’s been almost five hours (at the time of writing this report) since my Kali Linux
+machine has been rebooted now. A very interesting query I have executed here.
+<br />
+<img src="https://i.imgur.com/4CbWLNk.png" height="85%" width="85%" alt="Query 2 results"/>
+<br />
+
+<h3>Query 3</h3>
+I want to look at some more information about my users inside my machine. I want to see the user IDs (uid),
+usernames, description, and location from the ‘users’ table. I compile the following query below:
+<br />
+<img src="https://i.imgur.com/UfEDwyx.png" height="60%" width="60%" alt="Query 3"/>
+<br />
+I am using the <b>SELECT</b> clause to select these columns of data, such as username, uid, directory, etc. With the <b>from</b> clause, I grab this information from the ‘users’ table in my machine. Notice how I used the from clause as fully uppercased from what I did in Query 1; it makes me wonder if the SQL syntax is case sensitive. From here it lists all the credentials I asked for, listing the columns I requested from ‘users’ table.
+<br />
+<img src="https://i.imgur.com/WKEwa0r.png" height="90%" width="90%" alt="Query 3 results"/>
+<br />
+55 results are a bit too much to look at. I can do something to limit the number of results I get by appending a <b>LIMIT</b> clause into the query.
+
+<h3>Query 4</h3>
+I want to view fewer results of the selected criteria. I do this by appending a <b>LIMIT</b> clause to the query, as shown
+below. I want to limit the number of results to display 4 users.
+<br />
+<img src="https://i.imgur.com/7lpdJmQ.png" height="65%" width="65%" alt="Query 4"/>
+<br />
+Thus, I am shown 4 users in my host machine (E99s) from the results.
+<br />
+<img src="https://i.imgur.com/sN6c52r.png" height="95%" width="95%" alt="Query 4 results"/>
+<br />
+
+<h3>Query 5</h3>
+From looking at other references, I’m amazed to see all the possibilities that queries have to offer. I’ve executed
+many commands while installing and setting the floor for this OSQuery server, so I would like to see my shell history.
+I will search for executed commands on my system by entering:
+<br />
+<img src="https://i.imgur.com/8y4Izkj.png" height="45%" width="45%" alt="Query 5"/>
+<br />
+After running this query, there are 97 results listed. The table is filled with all the previous commands I executed
+regarding installation of Node.js and Docker. Some commands were executed as a root user, and a majority were
+executed as a regular user
+<br />
+<img src="https://i.imgur.com/2LRaViG.png" height="75%" width="75%" alt="Query 5 result"/>
 <br />
 <br />
 
 
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/UaPfFnv.png" alt="Change" style="width:70%">
-  <figcaption>Click <b>Change</b></figcaption>
-</figure>
-<br />
-<br />
+<h3>Closing Thougts</h3>
+OSQuery has the ability to execute schedule queries, real-time queries, and has an interactive mode. I've read that in
+terms of keeping your network environment updated, you can schedule certain queries to retrieve information on
+whether for example, if Windows updates are installed on an enterprises’ grand scale of machines. OSQuery's
+cross-platform capabilities enables users to better understand and configure the best queries to run for different
+respective systems such as Windows, macOS, Linux, and Docker APIs. This makes it reliable because you can
+essentially apply somewhat similar queries across different systems with the same functionality. 
 
 
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/Fh2Ytdi.png" alt="More" style="width:70%">
-  <figcaption>Click <b>More</b></figcaption>
-</figure>
-<br />
-<br />
+Additionally, OSQuery has safeguard functions. For example, if an organization were to run a query that would be too processor heavy OSQuery will terminate the agent and list that certain query on a banned list, and it restarts it to make sure that certain query won’t run unless you remove it from the blacklist of banned queries not allowed to run. The ability
+to prevent someone from making a mistake twice is extremely flexible for an enterprise environment to mitigate
+potential internal and external threats. Utilizing the data that OSQuery has to offer in an enterprise enforces a good
+level of security. Organizations can customize various queries to check that certain settings are configured as
+expected, or not as expected. In terms of learning, the near-infinite amount data one can receive from OSQuery
+maximizes system logging efficiency by possibly creating alerts in real time. For security teams, it makes it drastically
+flexible to get data back in real time and write alerts in SQL using OSQuery to better understand their enterprise
+environment. With the tool’s wide breadth of functionality and ease of customization it enables security
+professionals to create and add new functionality to their environment, utilizing SQL to write queries against tables
+to retrieve information about not only standard cross platform systems, but virtualized infrastructure as well.
 
 
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/ajbAV6z.png" alt="DNS suffix" style="width:70%">
-  <figcaption>Enter your local <b>DNS suffix</b> for your AD domain</figcaption>
-</figure>
-<br />
-<br />
-
-<br/>
-Name your computer whatever you like and Enter your AD local domain
-<br />
-<img src="https://i.imgur.com/fN3lm2L.png" height="45%" width="45%" alt="Win10Ent1 and Domain ad.lab"/>
-<br />
+For example, a query could be written to flag servers with an escalated privilege or root login within certain time
+frames. Security teams can use the access to that kind of user session data to indicate where and when specific
+logins are occurring within an organization’s infrastructure. This is especially important when performing audits or
+investigations on systems.
 
 
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/Wnnm30v.png" alt="Enter credentials" style="width:45%">
-  <figcaption>Enter the domain controller credentials</figcaption>
-</figure>
-<br />
-<br />
+OSQuery is continuing to improve its technology by working on its compatibility with Windows. OSQuery on
+Windows systems provide powerful analysis into its registry, Windows Management Instrumentation, and several
+other components that were previously difficult to monitor with a single tool. Instead of attempting to replace
+existing node security tooling, OSQuery strives to serve as an effective lightweight companion to provide visibility on
+the areas of the OS that were ignored or missed by other solutions. On Windows, the Windows Registry OSQuery can also help with monitoring for hardware changes. Particularly important for high security environments, networks that have to protect classified information or for those IT departments who just want to know when someone plugs in a malware ridden USB device and navigating your way through virtual machines provides a path into the threshold of advance technical skills.
+OSQuery’s registry table capabilities allow us to see the entire fleet’s registry values at any given point in time. With
+flexibility, the registry table permits users to check for the existence or non-existence of a key before attempting to
+check its value.
+
+Overall, it was very impactful and insightful to research about OSQuery and what functionality the prominent
+endpoint tool provides so far. I have learned a lot and still have much to learn about the near limitless capabilities of
+OSQuery and navigating through the endpoint agent. This fresh knowledge will be a crucial factor into my career development towards anywhere in the cybersecurity field.
 
 
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/n080Aqo.png" alt="Success" style="width:45%">
-  <figcaption>Success!</figcaption>
-</figure>
-<br />
-<br />
-
-<br />
-<img src="https://i.imgur.com/WZAVK9n.png" height="30%" width="30%" alt="Networks"/>
-<br />
-
-
-<br />
-<br />
-<br />
-<figure>
-  <img src="https://i.imgur.com/Xcj6axt.png" alt="Success" style="width:45%">
-  <figcaption>Choose <b>Other User</b> > Log in as a domain user</figcaption>
-</figure>
-<br />
-<br />
-
-
-<br />
-<img src="https://i.imgur.com/escNIPY.png" height="35%" width="35%" alt="Jane Doe logging in"/>
-<br />
-
-<br />
-Pull up PowerShell and look at the output from this <b><i>whoami</i></b> command
-<br />
-<img src="https://i.imgur.com/mRGIlli.png" height="65%" width="65%" alt="PS whoami"/>
-<br />
-
-
-Nice! We now have a domain controller and two Windows 10 Enterprise clients joined to the domain controller.
-<br />
