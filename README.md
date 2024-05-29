@@ -25,7 +25,7 @@ the processes within OSQuery and try out, compare and document five queries for 
 <br />
 <h3>Installing and Deploying OSQuery on Windows</h3>
 I will use my main, local Windows 10 host machine to install and deploy Fleet OSQuery. I begin to install Node.js and
-Docker on my Windows machine. I navigated to the “Fleet: Get Started” website and followed the instructions on
+Docker on my Windows machine. I navigated to the “Fleet: Get Started” <a href="https://fleetdm.com/docs/using-fleet/learn-how-to-use-fleet" target="_blank">website</a> and followed the instructions on
 installing Node.js and Docker into my Windows machine. As shown below I proceed to click the link to install Node.js
 the quickest way by clicking on that link (or button) and choosing the 64-bit version of the Node.js Windows installer
 that has the <b>.msi</b> extension.
