@@ -10,7 +10,7 @@
 <h2>Environments Used</h2>
 
 - <b>Windows 10 (Host Computer)</b>
-- <b>VirtualBox Hypervisor </b>
+- <b>Oracle VM VirtualBox Hypervisor </b>
 - <b>Kali Linux</b>
 
 <h2>Lab Walk-through:</h2>
